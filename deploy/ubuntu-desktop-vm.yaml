@@ -42,6 +42,11 @@ spec:
               - ubuntu-desktop
               - xrdp
             runcmd:
+            runcmd:
+              - mkfs.ext4 -F /dev/vdb
+              - mkdir /persistent
+              - mount /dev/vdb /persistent
+              - echo "/dev/vdb /persistent ext4 defaults 0 0" >> /etc/fstab
               - systemctl enable xrdp
               - systemctl start xrdp
       - name: persistentdisk  # PVC definition
