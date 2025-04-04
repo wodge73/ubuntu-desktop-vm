@@ -42,7 +42,6 @@ spec:
               - ubuntu-desktop
               - xrdp
             runcmd:
-            runcmd:
               - mkfs.ext4 -F /dev/vdb
               - mkdir /persistent
               - mount /dev/vdb /persistent
