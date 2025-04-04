@@ -15,14 +15,16 @@ spec:
           - name: cloudinitdisk
             disk: {}
             bus: virtio
-          # Add VGA for graphical output
+          - name: persistentdisk  # New persistent disk
+            disk: {}
+            bus: virtio
           graphics:
           - type: vnc
             listen:
               address: "0.0.0.0"
         resources:
           requests:
-            memory: 4Gi  # Minimum for GUI
+            memory: 4Gi
             cpu: 2
       volumes:
       - name: containerdisk
@@ -42,3 +44,17 @@ spec:
             runcmd:
               - systemctl enable xrdp
               - systemctl start xrdp
+      - name: persistentdisk  # PVC definition
+        persistentVolumeClaim:
+          claimName: ubuntu-desktop-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ubuntu-desktop-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
