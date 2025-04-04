@@ -1,0 +1,44 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: ubuntu-desktop-vm
+spec:
+  runStrategy: Always
+  template:
+    spec:
+      domain:
+        devices:
+          disks:
+          - name: containerdisk
+            disk: {}
+            bus: virtio
+          - name: cloudinitdisk
+            disk: {}
+            bus: virtio
+          # Add VGA for graphical output
+          graphics:
+          - type: vnc
+            listen:
+              address: "0.0.0.0"
+        resources:
+          requests:
+            memory: 4Gi  # Minimum for GUI
+            cpu: 2
+      volumes:
+      - name: containerdisk
+        containerDisk:
+          image: quay.io/containerdisks/ubuntu:22.04
+      - name: cloudinitdisk
+        cloudInitNoCloud:
+          userData: |-
+            #cloud-config
+            password: spud101!
+            chpasswd: { expire: False }
+            ssh_pwauth: True
+            package_update: true
+            packages:
+              - ubuntu-desktop
+              - xrdp
+            runcmd:
+              - systemctl enable xrdp
+              - systemctl start xrdp
